@@ -178,6 +178,40 @@ df_cleaned = remove_sparse_columns(df, columns_to_remove)
 df_cleaned_values = fill_missing_values(df_cleaned)
 #print(null_values.head(5))
 
+
+
+
+# EXTRACT
+
+dataset = read_datas(path_json, 'json')
+#print(dataset.data[0])
+
+#print(dataset.nome_colunas)
+#print(dataset.qtd_rows)
+
+
+# TRANSFORM
+
+dataset.remove_type_key()
+#print(dataset.remove_type_key()[0])
+
+dataset.convert_coordinates_to_string()
+#print(dataset.convert_coordinates_to_string()[0])
+
+dataset.process_datecollected()
+#print(dataset.process_datecollected()[0])
+
+processed = process_data(path_json, 'json')
+#print(processed[0])
+
+atualiza = update_structure(processed)
+print(atualiza[0])
+#print(dataset.size_data)
+# print(type_value[0])
+
+
+# LOAD
+
 # Salvando os dados em CSV
 df = df_cleaned_values.head(5)
 print(df)
