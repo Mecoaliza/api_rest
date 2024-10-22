@@ -71,6 +71,74 @@ def process_datecollected(dados):
     
     return dados
 
+def process_data(path_json, type_file):
+    raw_data = read_datas(path_json, type_file)
+
+    cleaned_data = remove_type_key(raw_data)
+    cleaned_data = convert_coordinates_to_string(cleaned_data)
+    cleaned_data = process_datecollected(cleaned_data)
+
+    return cleaned_data
+
+def size_data(dados):
+    return len(dados)
+
+def json_to_dataframe(dados):
+    data_coordinates = []
+    data_properties = []
+
+    for record in dados:
+        data_coordinates.append(record['geometry'])
+        data_properties.append(record['properties'])
+
+    
+    df_cordenadas = pd.DataFrame(data_coordinates)
+    df_properties = pd.DataFrame(data_properties)
+
+    df_combined = pd.concat([df_cordenadas, df_properties], axis=1)
+
+    return df_combined
+
+def fill_missing_values(df):
+    df_filled = df.fillna('Não informado')
+    return  df_filled
+
+def get_sparse_columns_info(df):
+    columns_null = df.isnull().sum()
+    columns_null_order = columns_null.sort_values(ascending=False)
+    media = columns_null_order.median()
+
+    columns_to_remove = columns_null_order[columns_null_order > media].index
+
+    return columns_null_order, media, columns_to_remove
+
+
+def remove_sparse_columns(df, columns_to_remove):
+    df_cleaned = df.drop(columns=columns_to_remove)
+
+    return df_cleaned
+
+def update_structure(data):
+
+    for record in data:
+
+        geometry = record.get('geometry', {})
+        coordinates = geometry.get('coordinates')
+
+        if coordinates:
+            properties = record.get('properties', {})
+
+            properties['coordinates'] = coordinates
+
+            if 'geometry' in record:
+                del record['geometry']
+
+    return data
+
+
+def save_df_to_csv(df, path_csv):
+    df.to_csv(path_csv, index=False)
+
 # Iniciando a leitura dos dados
 
 data = read_datas(path_json, 'json')
@@ -79,4 +147,17 @@ data = read_datas(path_json, 'json')
 # Resgatando o nome das colunas
 collumns_names = get_columns(data)
 
-print(remove_type_key(data)[0])
+# Excluindo valores com type, convertendo coordenadas para string, adicionando campo de data de coleta formatado
+processed_data  = process_data(path_json, 'json')
+#print(processed_data[0])
+
+# Verificar tamanho da base de dados
+tamanho_dados_iniciais = size_data(data)
+#print(f"Json brutos da api com: {tamanho_dados_iniciais} registros.")
+
+# Transformando o arquivo json em um dataframe
+df = json_to_dataframe(processed_data)
+#print(df.head())
+
+
+
