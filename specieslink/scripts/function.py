@@ -161,3 +161,25 @@ df = json_to_dataframe(processed_data)
 
 
 
+# Seleciona as colunas que têm uma quantidade de valores nulos maior do que a mediana e retorna seus nomes.
+columns_null_ordenadas, media, columns_to_remove = get_sparse_columns_info(df)
+# print("Colunas vazias ordenadas:\n", columns_null_ordenadas)
+# print("\nMediana dos valores nulos:", media)
+# print("\nColunas a serem removidas:", columns_to_remove)
+
+
+# Remove as colunas com muitos valores nulos do dataframe
+
+df_cleaned = remove_sparse_columns(df, columns_to_remove)
+#print("\nDataFrame após remover as colunas com muitos valores nulos:\n", df_cleaned.head(2))
+
+# Tratamento de valores ausentes com valores padrão
+
+df_cleaned_values = fill_missing_values(df_cleaned)
+#print(null_values.head(5))
+
+# Salvando os dados em CSV
+df = df_cleaned_values.head(5)
+print(df)
+
+save_df_to_csv(df_cleaned, '../data_processed/df_csv_tratado.csv')
