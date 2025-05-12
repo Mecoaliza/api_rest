@@ -192,20 +192,20 @@ dataset = read_datas(path_json, 'json')
 
 # TRANSFORM
 
-dataset.remove_type_key()
+#dataset.remove_type_key(raw_data)
 #print(dataset.remove_type_key()[0])
 
-dataset.convert_coordinates_to_string()
-#print(dataset.convert_coordinates_to_string()[0])
+# dataset.convert_coordinates_to_string()
+# print(dataset.convert_coordinates_to_string()[0])
 
-dataset.process_datecollected()
+#dataset.process_datecollected()
 #print(dataset.process_datecollected()[0])
 
 processed = process_data(path_json, 'json')
 #print(processed[0])
 
 atualiza = update_structure(processed)
-print(atualiza[0])
+#print(atualiza[0])
 #print(dataset.size_data)
 # print(type_value[0])
 
