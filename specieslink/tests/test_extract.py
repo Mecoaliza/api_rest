@@ -4,11 +4,15 @@ from scripts.extract import get_data_from_api, build_url
 import requests
 
 
-@patch('scripts.extract.requests.get')
-def test_get_data_from_api_success(mock_get):
-    mock_response = mock_get.return_value
-    mock_response.return_value.status_code = 200
-    mock_get.return_value.json.return_value = {"data": "ok"}
+@pytest.fixture
+def mock_api_response():
+    with patch("scripts.extract.requests.get") as mock_get:
+        yield mock_get
+
+
+def test_get_data_from_api_success(mock_api_response):
+    mock_api_response.return_value.status_code = 200
+    mock_api_response.return_value.json.return_value = {"data": "ok"}
 
     url = "https://fakeurl.com"
     result = get_data_from_api(url)
@@ -16,10 +20,10 @@ def test_get_data_from_api_success(mock_get):
     assert result == {"data": "ok"}
 
 
-@patch("scripts.extract.requests.get")
-def test_get_data_from_api_failure(mock_get):
+
+def test_get_data_from_api_failure(mock_api_response):
     
-    mock_get.side_effect = requests.exceptions.RequestException("Erro simulado")
+    mock_api_response.side_effect = requests.exceptions.RequestException("Erro simulado")
 
     url = "https://fakeurl.com"
     result = get_data_from_api(url)

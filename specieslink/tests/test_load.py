@@ -3,7 +3,11 @@ import pandas as pd
 from unittest.mock import patch, MagicMock
 from scripts.load import load_data_to_mongo
 
-@patch('scripts.load.MongoClient')
+@pytest.fixture
+def mock_mongo():
+    with patch("scripts.load.MongoClient") as mock_client:
+        yield mock_client
+
 def test_load_to_mongo_success(mock_mongo):
     mock_client = MagicMock()
     mock_db = MagicMock()
