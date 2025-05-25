@@ -61,23 +61,20 @@ class DataProcessor:
     @staticmethod
     def process_datecollected(data):
 
+        props = record.get('porperties', {})
+
         for record in data:
-            properties = record.get('properties', {})
-            day = properties.get('daycollected')
-            month = properties.get('monthcollected')
-            year = properties.get('yearcollected')
+
+            day = props.pop('daycollected', '')
+            month = props.pop('monthcollected', '')
+            year = props.pop('yearcollected', '')
 
             date_parts = [day.zfill(2) if day else '', month.zfill(2) if month else '', year]
             datecollected = '-'.join(part for part in date_parts if part)
 
             if datecollected:
-                properties['datecollected'] = datecollected
-                if 'daycollected' in properties:
-                    del properties['daycollected']
-                if 'monthcollected' in properties:
-                    del properties['monthcollected']
-                if 'yearcollected' in properties:
-                    del properties['yearcollected']
+                props['datecollected'] = datecollected
+                
         return data
 
     @staticmethod
